@@ -1,0 +1,17 @@
+<h1>List Page</h1>
+<a routerLink="/" [queryParams]="selectAppQueryParams$ | async">Home</a>
+<p>List of
+    <span *ngIf="{pageSize: selectPageSize$ | async, pageStartFrom: selectPageStartFrom$ | async} as pageParams">
+        <button (click)="updatePageSize(pageParams.pageSize!, -10)">↓</button>
+        {{pageParams.pageSize}}
+        <button (click)="updatePageSize(pageParams.pageSize!, 10)">↑</button>
+        records from position
+        <button (click)="updatePageStartFrom(pageParams.pageStartFrom!, -pageParams.pageSize!)">&lt;</button>
+        {{pageParams.pageStartFrom}}
+        <button (click)="updatePageStartFrom(pageParams.pageStartFrom!, pageParams.pageSize!)">&gt;</button>
+    </span>
+</p>
+<div *ngIf="listPageStore.isLoading$ | async">Loading...</div>
+<div *ngIf="(listPageStore.records$ | async) as records">
+    <div *ngFor="let record of records">{{record.id}}, {{record.project}}</div>
+</div>

@@ -1,0 +1,9 @@
+<p>
+  Select project:
+  <select name="project" (change)="onChange($event)">
+    <option value="" [selected]="(selectedProject$ | async) == ''"></option>
+    <option *ngFor="let project of PROJECTS | keyvalue" [value]="project.key" [selected]="(selectedProject$ | async) == project.key">
+      {{project.value}}
+    </option>
+  </select>
+</p>
