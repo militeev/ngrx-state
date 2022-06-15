@@ -1,9 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {select, Store} from '@ngrx/store';
-import {combineLatest, Observable, Subject} from 'rxjs';
+import {Component, OnDestroy} from '@angular/core';
+import {Store} from '@ngrx/store';
+import {combineLatest, Subject} from 'rxjs';
 import {AppState} from '../app.component';
-import {ListService, Record} from '../list.service';
 import {NavigationService} from '../navigation.service';
 import {
   selectAppQueryParams,
@@ -11,9 +9,10 @@ import {
   selectPageStartFrom,
   selectProject,
 } from '../router-selectors';
-import {ListPageStore} from './list-page.store';
+import {ItemData, ListPageStore} from './list-page.store';
 import {PAGE_SIZE, PAGE_START_FROM} from '../query-params';
-import {takeUntil} from 'rxjs/operators';
+import {takeUntil, tap} from 'rxjs/operators';
+import {Item} from '../list.service';
 
 @Component({
   selector: 'app-list-page',
@@ -39,9 +38,14 @@ export class ListPageComponent implements OnDestroy {
       this.selectPageStartFrom$,
       this.selectPageSize$,
     ])
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        tap(values => {
+          console.log(values);
+        })
+      )
       .subscribe(([project, pageStartFrom, pageSize]) => {
-        listPageStore.getRecords({
+        listPageStore.getItems({
           project,
           pageStartFrom,
           pageSize,
@@ -65,5 +69,13 @@ export class ListPageComponent implements OnDestroy {
     this.navigationService.setQueryParams({
       [PAGE_START_FROM]: '' + (currentPageStartFrom + increment),
     });
+  }
+
+  expandItem(id: number) {
+    this.listPageStore.getChildData(id);
+  }
+
+  collapseItem(id: number) {
+    this.listPageStore.updateItemData({id, itemData: {isExpanded: false}});
   }
 }

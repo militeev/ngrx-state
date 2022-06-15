@@ -5,13 +5,27 @@
         <button (click)="updatePageSize(pageParams.pageSize!, -10)">↓</button>
         {{pageParams.pageSize}}
         <button (click)="updatePageSize(pageParams.pageSize!, 10)">↑</button>
-        records from position
+        items from position
         <button (click)="updatePageStartFrom(pageParams.pageStartFrom!, -pageParams.pageSize!)">&lt;</button>
         {{pageParams.pageStartFrom}}
         <button (click)="updatePageStartFrom(pageParams.pageStartFrom!, pageParams.pageSize!)">&gt;</button>
     </span>
 </p>
-<div *ngIf="listPageStore.isLoading$ | async">Loading...</div>
-<div *ngIf="(listPageStore.records$ | async) as records">
-    <div *ngFor="let record of records">{{record.id}}, {{record.project}}</div>
+<div class="above">
+  <div *ngIf="listPageStore.isLoading$ | async">Loading...</div>
+  <div *ngIf="listPageStore.errorMessage$ | async as errorMessage" class="error">Error occurred: {{errorMessage}}</div>
+</div>
+<div *ngIf="(listPageStore.items$ | async) as items">
+    <div *ngFor="let item of items">
+      <ng-container *ngIf="listPageStore.getItemData$(item.id) | async as itemData">
+        {{item.id}}, {{item.project}} &nbsp;
+        <button *ngIf="!itemData.isExpanded" (click)="expandItem(item.id)">&#x142F;</button>
+        <button *ngIf="itemData.isExpanded" (click)="collapseItem(item.id)">&#x1431;</button>
+        <br>
+        <ng-container *ngIf="itemData.isExpanded">
+          <ng-container *ngIf="itemData.isLoading">Loading...</ng-container>
+          {{itemData.childData}}
+        </ng-container>
+      </ng-container>
+    </div>
 </div>

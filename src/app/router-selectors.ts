@@ -1,6 +1,11 @@
 import {getSelectors, RouterReducerState} from '@ngrx/router-store';
 import {createSelector} from '@ngrx/store';
-import {APP_QUERY_PARAMS} from './query-params';
+import {
+  APP_QUERY_PARAMS,
+  PAGE_SIZE,
+  PAGE_START_FROM,
+  PROJECT,
+} from './query-params';
 import {Params} from '@angular/router';
 
 export const {
@@ -15,16 +20,16 @@ export const {
 } = getSelectors();
 
 export const selectPageStartFrom = createSelector(
-  selectQueryParam('pageStartFrom'),
+  selectQueryParam(PAGE_START_FROM),
   value => (value ? parseInt(value) : 0)
 );
 
 export const selectPageSize = createSelector(
-  selectQueryParam('pageSize'),
+  selectQueryParam(PAGE_SIZE),
   value => (value ? parseInt(value) : 10)
 );
 
-export const selectProject = selectQueryParam('project');
+export const selectProject = selectQueryParam(PROJECT);
 
 export const selectAppQueryParams = createSelector(
   selectQueryParams,
